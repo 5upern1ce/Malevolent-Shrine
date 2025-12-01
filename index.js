@@ -5,55 +5,138 @@ const canvas = document.getElementById("domain");
  */
 const ctx = canvas.getContext("2d");
 
+function windowsize() {
+	ctx.canvas.width = window.innerWidth - 20;
+	ctx.canvas.height = window.innerHeight - 20;
+}
+
+windowsize();
+window.addEventListener("resize", windowsize);
 function getRandom(max) {
 	return Math.floor(Math.random() * max);
 }
 
-function setLine(startx, starty, endx, endy, speed) {
+function setLine(
+	startx,
+	starty,
+	endx,
+	endy,
+	speed,
+	backward,
+	lineNumber = 0,
+	lines = 10
+) {
 	let currentx = startx;
 	let currenty = starty;
 
-	drawLine(startx, starty, endx, endy, speed, currentx, currenty);
-	ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
+	drawLine(
+		startx,
+		starty,
+		endx,
+		endy,
+		speed,
+		currentx,
+		currenty,
+		backward,
+		lineNumber,
+		lines
+	);
 }
 
-function drawLine(startx, starty, endx, endy, speed, currentx, currenty) {
-	let color = "";
+function drawLine(
+	startx,
+	starty,
+	endx,
+	endy,
+	speed,
+	currentx,
+	currenty,
+	backward,
+	lineNumber = 0,
+	lines = 10
+) {
+	console.log(currentx);
+	console.log(currenty);
+	ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
+	ctx.lineWidth = getRandom(13);
+	ctx.strokeStyle = "black";
+	ctx.fillStyle = "white";
 	ctx.beginPath();
 	ctx.moveTo(startx, starty);
 	ctx.lineTo(currentx, currenty);
-	if (getRandom(2) === 0) {
-		color = "black";
-	} else {
-		color = "red";
-	}
-	ctx.strokeStyle = color;
-	ctx.lineWidth = getRandom(8);
+	ctx.fill();
 	ctx.stroke();
-	console.log("Another frame");
-	if (currentx < endx) {
-		requestAnimationFrame(() =>
-			drawLine(
-				startx,
-				starty,
-				endx,
-				endy,
-				speed,
-				currentx + (endx - startx) * speed,
-				currenty + (endy - starty) * speed
-			)
-		);
+
+	if (backward != true) {
+		if (currentx < endx) {
+			requestAnimationFrame(() =>
+				drawLine(
+					startx,
+					starty,
+					endx,
+					endy,
+					speed,
+					currentx + (endx - startx) * speed,
+					currenty + (endy - starty) * speed,
+					backward,
+					lineNumber,
+					lines
+				)
+			);
+		} else {
+			ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
+			if (lineNumber < lines) {
+				initline((lineNumber += 1), lines);
+			}
+			return;
+		}
 	} else {
+		if (currentx >= endx) {
+			requestAnimationFrame(() =>
+				drawLine(
+					startx,
+					starty,
+					endx,
+					endy,
+					speed,
+					currentx + (endx - startx) * speed,
+					currenty + (endy - starty) * speed,
+					backward,
+					lineNumber,
+					lines
+				)
+			);
+		} else {
+			ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
+			if (lineNumber < lines) {
+				initline((lineNumber += 1), lines);
+			}
+			return;
+		}
 	}
 }
 
+function initline(lineNumber = 0, lines = 10) {
+	console.log("initline " + lineNumber);
+	let starty = getRandom(ctx.canvas.height);
+	let speed = 0.09;
+	let backward = false;
+	console.log("Lets done");
+	let startx, endx;
+	if (getRandom(2) === 0) {
+		startx = 0;
+		endx = ctx.canvas.width;
+	} else {
+		startx = ctx.canvas.width;
+		endx = 0;
+		backward = true;
+	}
+	console.log("if statement done ");
+	setLine(startx, starty, endx, starty, speed, backward, lineNumber, lines);
+}
+
 function main() {
-	setLine(0, 600, 1000, 600, 0.1);
-	setLine(0, 800, 1000, 200, 0.1);
-	setLine(0, 100, 1000, 600, 0.1);
-	setLine(0, 800, 1000, 400, 0.1);
-	setLine(0, 500, 1000, 600, 0.1);
-	setLine(0, 200, 1000, 300, 0.1);
+	initline(0, 100);
 }
 
 main();
