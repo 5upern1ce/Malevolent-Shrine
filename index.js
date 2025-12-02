@@ -24,7 +24,8 @@ function setLine(
 	speed,
 	backward,
 	lineNumber = 0,
-	lines = 10
+	lines = 10,
+	widthln = 10
 ) {
 	let currentx = startx;
 	let currenty = starty;
@@ -39,7 +40,8 @@ function setLine(
 		currenty,
 		backward,
 		lineNumber,
-		lines
+		lines,
+		widthln
 	);
 }
 
@@ -53,18 +55,25 @@ function drawLine(
 	currenty,
 	backward,
 	lineNumber = 0,
-	lines = 10
+	lines = 10,
+	widthln
 ) {
 	console.log(currentx);
 	console.log(currenty);
-	ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
-	ctx.lineWidth = getRandom(13);
+	// ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
+	ctx.lineWidth = widthln + 15;
 	ctx.strokeStyle = "black";
 	ctx.fillStyle = "white";
 	ctx.beginPath();
 	ctx.moveTo(startx, starty);
 	ctx.lineTo(currentx, currenty);
 	ctx.fill();
+	ctx.stroke();
+	ctx.lineWidth -= 5;
+	ctx.strokeStyle = "white";
+	ctx.stroke();
+	ctx.lineWidth -= 10;
+	ctx.strokeStyle = "red";
 	ctx.stroke();
 
 	if (backward != true) {
@@ -80,7 +89,8 @@ function drawLine(
 					currenty + (endy - starty) * speed,
 					backward,
 					lineNumber,
-					lines
+					lines,
+					widthln
 				)
 			);
 		} else {
@@ -103,7 +113,8 @@ function drawLine(
 					currenty + (endy - starty) * speed,
 					backward,
 					lineNumber,
-					lines
+					lines,
+					widthln
 				)
 			);
 		} else {
@@ -119,8 +130,10 @@ function drawLine(
 function initline(lineNumber = 0, lines = 10) {
 	console.log("initline " + lineNumber);
 	let starty = getRandom(ctx.canvas.height);
-	let speed = 0.09;
+	let endy = getRandom(ctx.canvas.height);
+	let speed = 0.05;
 	let backward = false;
+	let widthln = getRandom(4);
 	console.log("Lets done");
 	let startx, endx;
 	if (getRandom(2) === 0) {
@@ -132,10 +145,22 @@ function initline(lineNumber = 0, lines = 10) {
 		backward = true;
 	}
 	console.log("if statement done ");
-	setLine(startx, starty, endx, starty, speed, backward, lineNumber, lines);
+	setLine(
+		startx,
+		starty,
+		endx,
+		endy,
+		speed,
+		backward,
+		lineNumber,
+		lines,
+		widthln
+	);
 }
 
 function main() {
+	initline(0, 100);
+	initline(0, 100);
 	initline(0, 100);
 }
 
